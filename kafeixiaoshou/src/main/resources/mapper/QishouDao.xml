@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.QishouDao">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.username as username
+        ,a.password as password
+        ,a.qishou_name as qishouName
+        ,a.qishou_photo as qishouPhoto
+        ,a.qishou_phone as qishouPhone
+        ,a.qishou_id_number as qishouIdNumber
+        ,a.sex_types as sexTypes
+        ,a.qishou_delete as qishouDelete
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.QishouView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM qishou  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.username != '' and params.username != null and params.username != 'null' ">
+                and a.username like CONCAT('%',#{params.username},'%')
+            </if>
+            <if test=" params.password != '' and params.password != null and params.password != 'null' ">
+                and a.password like CONCAT('%',#{params.password},'%')
+            </if>
+            <if test=" params.qishouName != '' and params.qishouName != null and params.qishouName != 'null' ">
+                and a.qishou_name like CONCAT('%',#{params.qishouName},'%')
+            </if>
+            <if test=" params.qishouPhone != '' and params.qishouPhone != null and params.qishouPhone != 'null' ">
+                and a.qishou_phone like CONCAT('%',#{params.qishouPhone},'%')
+            </if>
+            <if test=" params.qishouIdNumber != '' and params.qishouIdNumber != null and params.qishouIdNumber != 'null' ">
+                and a.qishou_id_number like CONCAT('%',#{params.qishouIdNumber},'%')
+            </if>
+            <if test="params.sexTypes != null and params.sexTypes != ''">
+                and a.sex_types = #{params.sexTypes}
+            </if>
+            <if test="params.qishouDeleteStart != null and params.qishouDeleteStart != ''">
+                <![CDATA[  and a.qishou_delete >= #{params.qishouDeleteStart}   ]]>
+            </if>
+            <if test="params.qishouDeleteEnd != null and params.qishouDeleteEnd != ''">
+                <![CDATA[  and a.qishou_delete <= #{params.qishouDeleteEnd}   ]]>
+            </if>
+             <if test="params.qishouDelete != null and params.qishouDelete != ''">
+                and a.qishou_delete = #{params.qishouDelete}
+             </if>
+
+        </where>
+
+        order by a.${params.orderBy} desc 
+    </select>
+
+</mapper>
